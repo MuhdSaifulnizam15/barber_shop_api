@@ -112,3 +112,10 @@ List of available routes:
 `GET /v1/users/:userId` - get user\
 `PATCH /v1/users/:userId` - update user\
 `DELETE /v1/users/:userId` - delete user
+
+**Category routes**:\
+`POST /v1/categories` - create a category\
+`GET /v1/categories` - get all categories\
+`GET /v1/categories/:categoryId` - get category\
+`PATCH /v1/categories/:categoryId` - update category\
+`DELETE /v1/categories/:categoryId` - delete category
