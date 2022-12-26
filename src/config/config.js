@@ -51,7 +51,7 @@ module.exports = {
   mongoose: {
     url: envVars.MONGODB_URL,
     options: {
-      useCreateIndex: true,
+      // useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },
