@@ -7,7 +7,7 @@ const createCategory = async (userBody) => {
     return category;
 };
 
-const queryCategorys = async (options) => {
+const queryCategories = async (options) => {
     const categories = await Category.paginate({}, options);
     return categories;
 };
@@ -41,7 +41,7 @@ const deleteCategoryById = async (categoryId) => {
 
 module.exports = {
     createCategory,
-    queryCategorys,
+    queryCategories,
     getCategoryById,
     getCategoryByName,
     updateCategoryById,
