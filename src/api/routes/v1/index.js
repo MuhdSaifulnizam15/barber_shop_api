@@ -1,6 +1,7 @@
 const express = require("express");
 const authRoutes = require('./auth.route');
 const userRoutes = require('./user.route');
+const categoryRoutes = require('./category.route');
 
 const router = express.Router();
 
@@ -17,6 +18,10 @@ const defaultRoutes = [
     {
       path: '/users',
       route: userRoutes,
+    },
+    {
+      path: '/categories',
+      route: categoryRoutes,
     },
 ];
 
