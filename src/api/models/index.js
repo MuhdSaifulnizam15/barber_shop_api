@@ -5,4 +5,5 @@ module.exports = {
   Service: require('./service.model'),
   Address: require('./address.model'),
   Branch: require('./branch.model'),
+  Staff: require('./staff.model'),
 };

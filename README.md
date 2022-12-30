@@ -133,3 +133,10 @@ List of available routes:
 `GET /v1/branches/:branchId` - get branch\
 `PATCH /v1/branches/:branchId` - update branch\
 `DELETE /v1/branches/:branchId` - delete branch
+
+**Staff routes**:\
+`POST /v1/staff` - create a staff\
+`GET /v1/staff` - get all staffs\
+`GET /v1/staff/:staffId` - get staff\
+`PATCH /v1/staff/:staffId` - update staff\
+`DELETE /v1/staff/:staffId` - delete staff

@@ -4,4 +4,5 @@ module.exports = {
   categoryController: require('./category.controller'),
   serviceController: require('./service.controller'),
   branchController: require('./branch.controller'),
+  staffController: require('./staff.controller'),
 }
