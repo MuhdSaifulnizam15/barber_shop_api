@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const createSatff = {
+const createStaff = {
   body: Joi.object().keys({
     full_name: Joi.string().required(),
     phone_no: Joi.string().required(),
@@ -8,20 +8,20 @@ const createSatff = {
   }),
 };
 
-const updateSatff = {
+const updateStaff = {
   params: Joi.object().keys({
     staffId: Joi.string().required(),
   }),
 };
 
-const deleteSatff = {
+const deleteStaff = {
   params: Joi.object().keys({
     staffId: Joi.string().required(),
   }),
 };
 
 module.exports = {
-  createSatff,
-  updateSatff,
-  deleteSatff,
+  createStaff,
+  updateStaff,
+  deleteStaff,
 };

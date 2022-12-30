@@ -5,6 +5,7 @@ const categoryRoutes = require("./category.route");
 const serviceRoutes = require("./service.route");
 const branchRoutes = require("./branch.route");
 const staffRoutes = require("./staff.route");
+const customerRoutes = require("./customer.route");
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const defaultRoutes = [
   {
     path: "/staff",
     route: staffRoutes,
+  },
+  {
+    path: "/customer",
+    route: customerRoutes,
   },
 ];
 

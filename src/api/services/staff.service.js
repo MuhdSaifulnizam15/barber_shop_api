@@ -27,7 +27,7 @@ const getStaffById = async (id) => {
 };
 
 const getStaffByName = async (name) => {
-  return Staff.findOne({ name });
+  return Staff.findOne({ fullname: name });
 };
 
 const updateStaffById = async (staffId, updateBody) => {

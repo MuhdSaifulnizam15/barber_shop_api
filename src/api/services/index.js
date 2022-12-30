@@ -7,4 +7,5 @@ module.exports = {
   serviceService: require('./service.service'),
   branchService: require('./branch.service'),
   staffService: require('./staff.service'),
+  customerService: require('./customer.service'),
 };
