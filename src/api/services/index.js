@@ -4,4 +4,5 @@ module.exports = {
   tokenService: require('./token.service'),
   userService: require('./user.service'),
   categoryService: require('./category.service'),
+  serviceService: require('./service.service'),
 };

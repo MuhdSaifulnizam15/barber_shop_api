@@ -119,3 +119,10 @@ List of available routes:
 `GET /v1/categories/:categoryId` - get category\
 `PATCH /v1/categories/:categoryId` - update category\
 `DELETE /v1/categories/:categoryId` - delete category
+
+**Service routes**:\
+`POST /v1/services` - create a service\
+`GET /v1/services` - get all services\
+`GET /v1/services/:serviceId` - get service\
+`PATCH /v1/services/:serviceId` - update service\
+`DELETE /v1/services/:serviceId` - delete service
