@@ -140,3 +140,10 @@ List of available routes:
 `GET /v1/staff/:staffId` - get staff\
 `PATCH /v1/staff/:staffId` - update staff\
 `DELETE /v1/staff/:staffId` - delete staff
+
+**Customer routes**:\
+`POST /v1/customer` - create a customer\
+`GET /v1/customer` - get all customers\
+`GET /v1/customer/:customerId` - get customer\
+`PATCH /v1/customer/:customerId` - update customer\
+`DELETE /v1/customer/:customerId` - delete customer
