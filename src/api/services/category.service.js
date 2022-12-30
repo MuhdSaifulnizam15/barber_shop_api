@@ -3,6 +3,10 @@ const { Category } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createCategory = async (userBody) => {
+    if(await Category.isNameTaken(userBody.name)) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'category already exist.');
+    }
+
     const category = await Category.create(userBody);
     return category;
 };
