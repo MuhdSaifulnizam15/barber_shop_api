@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
-const getPrice = require("../utils/priceFormatter");
 const { toJSON } = require("./plugins");
 
 const serviceSchema = mongoose.Schema(

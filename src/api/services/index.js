@@ -5,4 +5,5 @@ module.exports = {
   userService: require('./user.service'),
   categoryService: require('./category.service'),
   serviceService: require('./service.service'),
+  branchService: require('./branch.service'),
 };

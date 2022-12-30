@@ -11,9 +11,11 @@ const getPermissionList = [
   "getCategories",
   "getService",
   "getServices",
+  "getBranch",
+  "getBranches",
 ];
 const staffPermissionList = [];
-const adminManagePermissionList = ["manageUsers","manageCategory","manageService"];
+const adminManagePermissionList = ["manageUsers","manageCategory","manageService","manageBranch"];
 
 roleRights.set(roles[0], staffPermissionList.concat(getPermissionList));
 roleRights.set(

@@ -3,4 +3,5 @@ module.exports = {
   userValidation: require('./user.validation'),
   categoryValidation: require('./category.validation'),
   serviceValidation: require('./service.validation'),
+  branchValidation: require('./branch.validation'),
 };

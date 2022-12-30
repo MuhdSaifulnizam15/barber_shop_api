@@ -126,3 +126,10 @@ List of available routes:
 `GET /v1/services/:serviceId` - get service\
 `PATCH /v1/services/:serviceId` - update service\
 `DELETE /v1/services/:serviceId` - delete service
+
+**Branch routes**:\
+`POST /v1/branches` - create a branch\
+`GET /v1/branches` - get all branches\
+`GET /v1/branches/:branchId` - get branch\
+`PATCH /v1/branches/:branchId` - update branch\
+`DELETE /v1/branches/:branchId` - delete branch
