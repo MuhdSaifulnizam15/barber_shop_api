@@ -1,0 +1,28 @@
+const Joi = require("joi");
+
+const createSales = {
+  body: Joi.object().keys({
+    branch_id: Joi.string().required(),
+    barber_id: Joi.string().required(),
+    services: Joi.array().items(Joi.string()),
+    customer_id: Joi.string().required(),
+  }),
+};
+
+const updateSales = {
+  params: Joi.object().keys({
+    saleId: Joi.string().required(),
+  }),
+};
+
+const deleteSales = {
+  params: Joi.object().keys({
+    saleId: Joi.string().required(),
+  }),
+};
+
+module.exports = {
+  createSales,
+  updateSales,
+  deleteSales,
+};

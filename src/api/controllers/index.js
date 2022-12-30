@@ -6,4 +6,5 @@ module.exports = {
   branchController: require('./branch.controller'),
   staffController: require('./staff.controller'),
   customerController: require('./customer.controller'),
+  saleController: require('./sale.controller'),
 }

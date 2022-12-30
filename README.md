@@ -147,3 +147,10 @@ List of available routes:
 `GET /v1/customer/:customerId` - get customer\
 `PATCH /v1/customer/:customerId` - update customer\
 `DELETE /v1/customer/:customerId` - delete customer
+
+**Sale routes**:\
+`POST /v1/sales` - create a sales\
+`GET /v1/sales` - get all sales\
+`GET /v1/sales/:salesId` - get sales\
+`PATCH /v1/sales/:salesId` - update sales\
+`DELETE /v1/sales/:salesId` - delete sales

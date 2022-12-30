@@ -7,4 +7,5 @@ module.exports = {
   Branch: require('./branch.model'),
   Staff: require('./staff.model'),
   Customer: require('./customer.model'),
+  Sale: require('./sale.model'),
 };
