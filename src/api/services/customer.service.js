@@ -33,6 +33,20 @@ const updateCustomerById = async (customerId, updateBody) => {
   return customer;
 };
 
+const updateCustomerPoints = async (customerId, updateBody) => {
+  const customer = await getCustomerById(customerId);
+  if (!customer) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Customer not found");
+  }
+
+  customer.total_spend = parseFloat(parseFloat(customer.total_spend) + parseFloat(updateBody.total_spend));
+  customer.total_membership_point = parseFloat(customer.total_membership_point) + parseFloat(updateBody.total_rewarded_point) - parseFloat(updateBody.total_redeemed_point);
+  customer.total_redeemed_point = parseFloat(customer.total_redeemed_point) + parseFloat(updateBody.total_redeemed_point)
+
+  await customer.save();
+  return customer;
+}
+
 const deleteCustomerById = async (customerId) => {
   const customer = await getCustomerById(customerId);
   if (!customer) {
@@ -49,4 +63,5 @@ module.exports = {
   getCustomerByName,
   updateCustomerById,
   deleteCustomerById,
+  updateCustomerPoints
 };

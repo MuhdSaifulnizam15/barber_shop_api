@@ -2,7 +2,7 @@ const httpStatus = require("http-status");
 const { Sale } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getBranchById } = require("./branch.service");
-const { getCustomerById } = require("./customer.service");
+const { getCustomerById, updateCustomerPoints } = require("./customer.service");
 const { getStaffById } = require("./staff.service");
 
 const createSale = async (userBody) => {
@@ -25,11 +25,20 @@ const createSale = async (userBody) => {
   userBody.customer_id = customer._id;
 
   const sale = await Sale.create(userBody);
-  return sale;
+
+  // update customer total_redeemed_point and total_spend
+  const updateCustPointsBody = {
+    total_redeemed_point: userBody?.total_redeemed_point || 0,
+    total_rewarded_point: userBody.total_rewarded_point,
+    total_spend: userBody.total,
+  }
+
+  const updateCustPointsBodyRes = await updateCustomerPoints(userBody.customer_id, updateCustPointsBody);
+  return sale; 
 };
 
 const querySales = async (options) => {
-  options.populate = ['branch_id', 'barber_id', 'customer_id', 'services'];
+  options.populate = ['branch_id', 'barber_id', 'customer_id', 'order.service'];
   const sales = await Sale.paginate({}, options);
   return sales;
 };

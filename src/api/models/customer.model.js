@@ -12,6 +12,18 @@ const customerSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    total_membership_point: {
+      type: String,
+      default: 0
+    },
+    total_redeemed_point: {
+      type: String,
+      default: 0
+    },
+    total_spend: {
+      type: String,
+      default: 0
+    }
   },
   {
     timestamps: true,
