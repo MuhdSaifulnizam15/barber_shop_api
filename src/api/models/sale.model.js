@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const { toJSON } = require("./plugins");
+const { orderSchema } = require('./order.model');
 
 const salesSchema = mongoose.Schema(
   {
@@ -14,23 +15,17 @@ const salesSchema = mongoose.Schema(
       ref: "Staff",
       required: true,
     },
-    services: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Service",
-        required: true,
-      },
-    ],
+    order: [orderSchema],
     customer_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
     },
-    total_points: {
+    total: {
       type: String,
       default: 0
     },
-    total: {
+    rewarded_points: {
       type: String,
       default: 0
     }

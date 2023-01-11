@@ -8,4 +8,5 @@ module.exports = {
   Staff: require('./staff.model'),
   Customer: require('./customer.model'),
   Sale: require('./sale.model'),
+  Order: require('./order.model'),
 };

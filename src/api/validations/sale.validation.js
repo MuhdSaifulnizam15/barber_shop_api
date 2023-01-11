@@ -4,7 +4,12 @@ const createSales = {
   body: Joi.object().keys({
     branch_id: Joi.string().required(),
     barber_id: Joi.string().required(),
-    services: Joi.array().items(Joi.string()),
+    order: Joi.array().items(
+      Joi.object({
+        service: Joi.string().required(),
+        quantity: Joi.string(),
+      })
+    ),
     customer_id: Joi.string().required(),
   }),
 };
