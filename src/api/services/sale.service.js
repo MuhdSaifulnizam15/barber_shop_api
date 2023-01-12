@@ -1,4 +1,5 @@
 const httpStatus = require("http-status");
+const moment = require("moment");
 const { Sale } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getBranchById } = require("./branch.service");
@@ -31,14 +32,17 @@ const createSale = async (userBody) => {
     total_redeemed_point: userBody?.total_redeemed_point || 0,
     total_rewarded_point: userBody.total_rewarded_point,
     total_spend: userBody.total,
-  }
+  };
 
-  const updateCustPointsBodyRes = await updateCustomerPoints(userBody.customer_id, updateCustPointsBody);
-  return sale; 
+  const updateCustPointsBodyRes = await updateCustomerPoints(
+    userBody.customer_id,
+    updateCustPointsBody
+  );
+  return sale;
 };
 
 const querySales = async (options) => {
-  options.populate = ['branch_id', 'barber_id', 'customer_id', 'order.service'];
+  options.populate = ["branch_id", "barber_id", "customer_id", "order.service"];
   const sales = await Sale.paginate({}, options);
   return sales;
 };
@@ -66,10 +70,65 @@ const deleteSaleById = async (saleId) => {
   return sale;
 };
 
+const getTotalSales = async () => {
+  let today = 0,
+    past_3_day = 0,
+    last_week = 0,
+    last_month = 0;
+
+  // total sales today
+  const salesToday = await Sale.find({
+    createdAt: {
+      $gte: moment().startOf("day"),
+      $lt: moment().endOf("day"),
+    },
+  });
+
+  today = salesToday.reduce((a, b) => +a + +b.total, 0);
+
+  // total sales for past 3 day
+  const salesPast3Day = await Sale.find({
+    createdAt: {
+      $gte: moment().subtract(3, "day").startOf("day"),
+      $lt: moment().endOf("day"),
+    },
+  });
+
+  past_3_day = salesPast3Day.reduce((a, b) => +a + +b.total, 0);
+
+  // total sales for last week
+  const salesLastWeek = await Sale.find({
+    createdAt: {
+      $gte: moment().subtract(1, "weeks").startOf("week"),
+      $lt: moment().subtract(1, "weeks").endOf("week"),
+    },
+  });
+
+  last_week = salesLastWeek.reduce((a, b) => +a + +b.total, 0);
+
+      // total sales today
+  const salesLastMonth = await Sale.find({
+    createdAt: {
+      $gte: moment().subtract(1, "month").startOf("month"),
+      $lt: moment().subtract(1, "month").endOf("month")
+    },
+  });
+
+  last_month = salesLastMonth.reduce((a, b) => +a + +b.total, 0);
+
+  return {
+    today,
+    past_3_day,
+    last_week,
+    last_month,
+  };
+};
+
 module.exports = {
   createSale,
   querySales,
   getSaleById,
   updateSaleById,
   deleteSaleById,
+  getTotalSales,
 };

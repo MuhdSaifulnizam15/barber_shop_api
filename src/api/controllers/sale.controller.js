@@ -33,10 +33,16 @@ const deleteSale = catchAsync(async (req, res) => {
     res.send({ status: true, code: '0000', message: 'Sale successfully deleted'});
 })
 
+const getTotalSales = catchAsync(async (req, res) => {
+    const data = await saleService.getTotalSales();
+    res.send({ status: true, code: '0000', chart: data});
+})
+
 module.exports = {
     createSale,
     getSale,
     getSales,
     updateSale,
     deleteSale,
+    getTotalSales,
 };
