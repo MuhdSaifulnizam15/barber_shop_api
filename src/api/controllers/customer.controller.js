@@ -23,6 +23,15 @@ const getCustomer = catchAsync(async (req, res) => {
     res.send({ status: true, code: '0000', customer });
 });
 
+const getCustomerByPhoneNum = catchAsync(async (req, res) => {
+    const customer = await customerService.getCustomerByPhoneNum(req.params.phoneNo);
+    console.log('customer', customer);
+    if(!customer){
+        throw new ApiError(httpStatus.NOT_FOUND, 'Customer phone no not found');
+    }
+    res.send({ status: true, code: '0000', customer });
+})
+
 const updateCustomer = catchAsync(async (req, res) => {
     const customer = await customerService.updateCustomerById(req.params.customerId, req.body);
     res.send({ status: true, code: '0000', customer });
@@ -39,4 +48,5 @@ module.exports = {
     getCustomers,
     updateCustomer,
     deleteCustomer,
+    getCustomerByPhoneNum,
 };

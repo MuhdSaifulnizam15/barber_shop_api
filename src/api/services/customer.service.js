@@ -23,6 +23,10 @@ const getCustomerByName = async (name) => {
   return Customer.findOne({ name });
 };
 
+const getCustomerByPhoneNum = async (phone_no) => {
+  return Customer.findOne({ phone_no })
+}
+
 const updateCustomerById = async (customerId, updateBody) => {
   const customer = await getCustomerById(customerId);
   if (!customer) {
@@ -63,5 +67,6 @@ module.exports = {
   getCustomerByName,
   updateCustomerById,
   deleteCustomerById,
-  updateCustomerPoints
+  updateCustomerPoints,
+  getCustomerByPhoneNum,
 };
