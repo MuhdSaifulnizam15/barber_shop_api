@@ -22,6 +22,7 @@ const envVarsSchema = Joi.object()
       .description("days after which refresh tokens expire"),
     SMTP_HOST: Joi.string().description("server that will send the emails"),
     SMTP_PORT: Joi.number().description("port to connect to the email server"),
+    SMTP_SERVICE: Joi.string().description("email service name"),
     SMTP_USERNAME: Joi.string().description("username for email server"),
     SMTP_PASSWORD: Joi.string().description("password for email server"),
     EMAIL_FROM: Joi.string().description(
@@ -67,6 +68,8 @@ module.exports = {
     smtp: {
       host: envVars.SMTP_HOST,
       port: envVars.SMTP_PORT,
+      secure: false,
+      service: envVars.SMTP_SERVICE,
       auth: {
         user: envVars.SMTP_USERNAME,
         pass: envVars.SMTP_PASSWORD,
