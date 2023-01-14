@@ -22,7 +22,8 @@ const register = catchAsync(async (req, res) => {
     .send({
       status: true,
       code: "0000",
-      message: "User was registered successfully! Please check your email",
+      // message: "User was registered successfully! Please check your email",
+      message: "User successfully registered. Please login using this account",
     });
 });
 
