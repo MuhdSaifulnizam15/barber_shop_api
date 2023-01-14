@@ -26,8 +26,17 @@ const deleteSales = {
   }),
 };
 
+const getChartData = {
+  params: Joi.object().keys({
+    chartType: Joi.string()
+      .valid("daily", "past3", "week", "month", "annual")
+      .required(),
+  }),
+};
+
 module.exports = {
   createSales,
   updateSales,
   deleteSales,
+  getChartData,
 };

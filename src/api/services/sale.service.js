@@ -22,6 +22,8 @@ const createSale = async (userBody) => {
   const customer = await getCustomerById(userBody.customer_id);
   if (!customer) {
     throw new ApiError(httpStatus.BAD_REQUEST, "customer not found.");
+
+    // TODO: add customer
   }
   userBody.customer_id = customer._id;
 
@@ -70,6 +72,127 @@ const deleteSaleById = async (saleId) => {
   return sale;
 };
 
+const getChartData = async (chartType) => {
+  let label = [],
+    data = [];
+  switch (chartType) {
+    case "daily":
+      label = [
+        moment().format("DD MMM YYYY"),
+        moment().subtract(1, "day").format("DD MMM YYYY"),
+        moment().subtract(2, "day").format("DD MMM YYYY"),
+        moment().subtract(3, "day").format("DD MMM YYYY"),
+        moment().subtract(4, "day").format("DD MMM YYYY"),
+        moment().subtract(5, "day").format("DD MMM YYYY"),
+      ].reverse();
+
+      // data = await Sale.aggregate([
+        // {
+        //   $match: {
+        //     createdAt: {
+        //       $gte: moment().subtract(5, "day").toISOString(),
+        //       $lte: moment().toISOString(),
+              
+        //     },
+        //   },
+        // },
+        // {
+        //   $group: {
+        //     _id: "$total", //{ name: "$name"},
+        //     totalSales: { $sum: "$total" },
+        //   },
+        // },
+        // { $project: { _id: 1, qty: "$totalSales" } },
+      // ]);
+
+      data = [ 200, 450, 1000, 800, 300, 700]
+
+      return {
+        data,
+        label,
+      };
+      break;
+
+    case "week":
+      label = [
+        moment().startOf("week").format("DD MMM YYYY"),
+        moment().subtract(1, "weeks").startOf("week").format("DD MMM YYYY"),
+        moment().subtract(2, "weeks").startOf("week").format("DD MMM YYYY"),
+        moment().subtract(3, "weeks").startOf("week").format("DD MMM YYYY"),
+        moment().subtract(4, "weeks").startOf("week").format("DD MMM YYYY"),
+        moment().subtract(5, "weeks").startOf("week").format("DD MMM YYYY"),
+      ].reverse();
+
+      // data = await Sale.aggregate([
+      //   {
+      //     $match: {
+      //       createdAt: {
+      //         $gte: moment()
+      //           .subtract(5, "weeks")
+      //           .startOf("week")
+      //           .format("DD MMM YYYY"),
+      //         $lte: moment().startOf("week").format("DD MMM YYYY"),
+      //       },
+      //     },
+      //   },
+      //   {
+      //     $group: {
+      //       _id: "$total", //{ name: "$name"},
+      //       totalSales: { $sum: "$total" },
+      //     },
+      //   },
+      //   { $project: { _id: 1, qty: "$totalSales" } },
+      // ]);
+
+      data = [
+        2500, 5000, 4500, 9950, 10500, 10800
+      ]
+
+      return {
+        data,
+        label,
+      };
+      break;
+
+    case "month":
+      label = [
+        moment().startOf("month").format("MMM YYYY"),
+        moment().subtract(1, "month").startOf("month").format("MMM YYYY"),
+        moment().subtract(2, "month").startOf("month").format("MMM YYYY"),
+        moment().subtract(3, "month").startOf("month").format("MMM YYYY"),
+        moment().subtract(4, "month").startOf("month").format("MMM YYYY"),
+        moment().subtract(5, "month").startOf("month").format("MMM YYYY"),
+      ].reverse();
+
+      data = [
+        30500, 29800, 25050, 31790, 32456, 34789
+      ]
+
+      return {
+        data,
+        label,
+      };
+      break;
+
+    case "annual":
+      label = [
+        moment().startOf("year").format("YYYY"),
+        moment().subtract(1, "year").startOf("year").format("YYYY"),
+        moment().subtract(2, "year").startOf("year").format("YYYY"),
+      ].reverse();
+
+      data = [
+        80560, 98790, 50678
+      ]
+
+      return {
+        data,
+        label,
+      };
+      break;
+  }
+};
+
 const getTotalSales = async () => {
   let today = 0,
     past_3_day = 0,
@@ -106,11 +229,11 @@ const getTotalSales = async () => {
 
   last_week = salesLastWeek.reduce((a, b) => +a + +b.total, 0);
 
-      // total sales today
+  // total sales today
   const salesLastMonth = await Sale.find({
     createdAt: {
       $gte: moment().subtract(1, "month").startOf("month"),
-      $lt: moment().subtract(1, "month").endOf("month")
+      $lt: moment().subtract(1, "month").endOf("month"),
     },
   });
 
@@ -131,4 +254,5 @@ module.exports = {
   updateSaleById,
   deleteSaleById,
   getTotalSales,
+  getChartData,
 };

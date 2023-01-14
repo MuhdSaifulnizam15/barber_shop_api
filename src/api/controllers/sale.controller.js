@@ -35,6 +35,11 @@ const deleteSale = catchAsync(async (req, res) => {
 
 const getTotalSales = catchAsync(async (req, res) => {
     const data = await saleService.getTotalSales();
+    res.send({ status: true, code: '0000', sales_data: data});
+})
+
+const getChartData = catchAsync(async (req, res) => {
+    const data = await saleService.getChartData(req.params.chartType);
     res.send({ status: true, code: '0000', chart: data});
 })
 
@@ -45,4 +50,5 @@ module.exports = {
     updateSale,
     deleteSale,
     getTotalSales,
+    getChartData,
 };
