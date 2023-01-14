@@ -16,12 +16,13 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
-  } else if (!user.active) {
-    throw new ApiError(
-      httpStatus.UNAUTHORIZED,
-      "Account is inactive. Please activate your account by clicking our verification link that has been sent to your email address."
-    );
   }
+  // else if (!user.active) {
+  //   throw new ApiError(
+  //     httpStatus.UNAUTHORIZED,
+  //     "Account is inactive. Please activate your account by clicking our verification link that has been sent to your email address."
+  //   );
+  // }
   return user;
 };
 
