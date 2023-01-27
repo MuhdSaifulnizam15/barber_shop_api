@@ -1,5 +1,7 @@
 const httpStatus = require("http-status");
 const moment = require("moment");
+const axios = require("axios");
+const config = require("../../config/config");
 const { Sale } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getBranchById } = require("./branch.service");
@@ -40,6 +42,75 @@ const createSale = async (userBody) => {
     userBody.customer_id,
     updateCustPointsBody
   );
+
+  console.log('updateCustPointsBodyRes', updateCustPointsBodyRes.total_membership_point);
+  console.log('sale', sale);
+
+  // send whatsapp to phone number
+
+  const data = JSON.stringify({
+    messaging_product: "whatsapp",
+    to: "6" + updateCustPointsBodyRes.phone_no,
+    type: "template",
+    template: {
+      name: "purchase_points_update",
+      language: {
+        code: "en_US",
+      },
+      components: [
+        {
+          type: "body",
+          parameters: [
+            {
+              type: "text",
+              text: customer.name,
+            },
+            {
+              type: "text",
+              text: branch.name,
+            },
+            {
+              type: "text",
+              text: userBody.total,
+            },
+            {
+              type: "text",
+              text: userBody.total_rewarded_point,
+            },
+            {
+              type: "text",
+              text: moment().format("Do MMM YYYY"),
+            },
+            {
+              type: "text",
+              text: updateCustPointsBodyRes.total_membership_point,
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  const configuration = {
+    method: "post",
+    url: `https://graph.facebook.com/v15.0/${config.meta.sender_phone_id}/messages`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization:
+        `Bearer ${config.meta.access_token}`,
+    },
+    data: data,
+  };
+
+  console.log('data', data);
+  const sendWhatsappMessage = await axios(configuration)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
   return sale;
 };
 
@@ -87,25 +158,25 @@ const getChartData = async (chartType) => {
       ].reverse();
 
       // data = await Sale.aggregate([
-        // {
-        //   $match: {
-        //     createdAt: {
-        //       $gte: moment().subtract(5, "day").toISOString(),
-        //       $lte: moment().toISOString(),
-              
-        //     },
-        //   },
-        // },
-        // {
-        //   $group: {
-        //     _id: "$total", //{ name: "$name"},
-        //     totalSales: { $sum: "$total" },
-        //   },
-        // },
-        // { $project: { _id: 1, qty: "$totalSales" } },
+      // {
+      //   $match: {
+      //     createdAt: {
+      //       $gte: moment().subtract(5, "day").toISOString(),
+      //       $lte: moment().toISOString(),
+
+      //     },
+      //   },
+      // },
+      // {
+      //   $group: {
+      //     _id: "$total", //{ name: "$name"},
+      //     totalSales: { $sum: "$total" },
+      //   },
+      // },
+      // { $project: { _id: 1, qty: "$totalSales" } },
       // ]);
 
-      data = [ 200, 450, 1000, 800, 300, 700]
+      data = [200, 450, 1000, 800, 300, 700];
 
       return {
         data,
@@ -144,9 +215,7 @@ const getChartData = async (chartType) => {
       //   { $project: { _id: 1, qty: "$totalSales" } },
       // ]);
 
-      data = [
-        2500, 5000, 4500, 9950, 10500, 10800
-      ]
+      data = [2500, 5000, 4500, 9950, 10500, 10800];
 
       return {
         data,
@@ -164,9 +233,7 @@ const getChartData = async (chartType) => {
         moment().subtract(5, "month").startOf("month").format("MMM YYYY"),
       ].reverse();
 
-      data = [
-        30500, 29800, 25050, 31790, 32456, 34789
-      ]
+      data = [30500, 29800, 25050, 31790, 32456, 34789];
 
       return {
         data,
@@ -181,9 +248,7 @@ const getChartData = async (chartType) => {
         moment().subtract(2, "year").startOf("year").format("YYYY"),
       ].reverse();
 
-      data = [
-        80560, 98790, 50678
-      ]
+      data = [80560, 98790, 50678];
 
       return {
         data,

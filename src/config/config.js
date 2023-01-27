@@ -83,4 +83,8 @@ module.exports = {
       : envVars.NODE_ENV == "development"
       ? envVars.URL_DEV
       : envVars.URL_PROD,
+  meta: {
+    access_token: envVars.META_ACCESS_TOKEN,
+    sender_phone_id: envVars.META_SENDER_PHONE_ID
+  }
 };

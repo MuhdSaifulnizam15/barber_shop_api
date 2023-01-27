@@ -43,9 +43,9 @@ const updateCustomerPoints = async (customerId, updateBody) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Customer not found");
   }
 
-  customer.total_spend = parseFloat(parseFloat(customer.total_spend) + parseFloat(updateBody.total_spend));
-  customer.total_membership_point = parseFloat(customer.total_membership_point) + parseFloat(updateBody.total_rewarded_point) - parseFloat(updateBody.total_redeemed_point);
-  customer.total_redeemed_point = parseFloat(customer.total_redeemed_point) + parseFloat(updateBody.total_redeemed_point)
+  customer.total_spend = parseFloat(parseFloat(customer.total_spend) + parseFloat(updateBody.total_spend)).toFixed(2);
+  customer.total_membership_point = parseFloat(parseFloat(customer.total_membership_point) + parseFloat(updateBody.total_rewarded_point) - parseFloat(updateBody.total_redeemed_point)).toFixed(0);
+  customer.total_redeemed_point = parseFloat(parseFloat(customer.total_redeemed_point) + parseFloat(updateBody.total_redeemed_point)).toFixed(0)
 
   await customer.save();
   return customer;
