@@ -23,13 +23,14 @@ const createSale = async (userBody) => {
 
   let customer;
   if(userBody?.customer_id) {
+    // existing customer
     customer = await getCustomerById(userBody.customer_id);
     if (!customer) {
       throw new ApiError(httpStatus.BAD_REQUEST, "customer not found.");
     }
     userBody.customer_id = customer._id;
   } else {
-    // TODO: add customer
+    // add new customer
     const body = {
       name: userBody?.customer_name,
       phone_no: userBody?.customer_phone_no
