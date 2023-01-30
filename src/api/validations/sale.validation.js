@@ -10,7 +10,9 @@ const createSales = {
         quantity: Joi.string(),
       })
     ),
-    customer_id: Joi.string().required(),
+    customer_id: Joi.string(),
+    customer_name: Joi.string(),
+    customer_phone_no: Joi.string(),
   }),
 };
 

@@ -5,7 +5,7 @@ const config = require("../../config/config");
 const { Sale } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getBranchById } = require("./branch.service");
-const { getCustomerById, updateCustomerPoints } = require("./customer.service");
+const { getCustomerById, updateCustomerPoints, createCustomer } = require("./customer.service");
 const { getStaffById } = require("./staff.service");
 
 const createSale = async (userBody) => {
@@ -21,13 +21,25 @@ const createSale = async (userBody) => {
   }
   userBody.barber_id = barber._id;
 
-  const customer = await getCustomerById(userBody.customer_id);
-  if (!customer) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "customer not found.");
-
+  let customer;
+  if(userBody?.customer_id) {
+    customer = await getCustomerById(userBody.customer_id);
+    if (!customer) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "customer not found.");
+    }
+    userBody.customer_id = customer._id;
+  } else {
     // TODO: add customer
+    const body = {
+      name: userBody?.customer_name,
+      phone_no: userBody?.customer_phone_no
+    }
+    customer = await createCustomer(body);
+    if(!customer) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "error on saving customer data, please try again.");
+    }
+    userBody.customer_id = customer._id;
   }
-  userBody.customer_id = customer._id;
 
   const sale = await Sale.create(userBody);
 
