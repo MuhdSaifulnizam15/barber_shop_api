@@ -5,7 +5,11 @@ const config = require("../../config/config");
 const { Sale } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getBranchById } = require("./branch.service");
-const { getCustomerById, updateCustomerPoints, createCustomer } = require("./customer.service");
+const {
+  getCustomerById,
+  updateCustomerPoints,
+  createCustomer,
+} = require("./customer.service");
 const { getStaffById } = require("./staff.service");
 
 const createSale = async (userBody) => {
@@ -22,7 +26,7 @@ const createSale = async (userBody) => {
   userBody.barber_id = barber._id;
 
   let customer;
-  if(userBody?.customer_id) {
+  if (userBody?.customer_id) {
     // existing customer
     customer = await getCustomerById(userBody.customer_id);
     if (!customer) {
@@ -33,11 +37,14 @@ const createSale = async (userBody) => {
     // add new customer
     const body = {
       name: userBody?.customer_name,
-      phone_no: userBody?.customer_phone_no
-    }
+      phone_no: userBody?.customer_phone_no,
+    };
     customer = await createCustomer(body);
-    if(!customer) {
-      throw new ApiError(httpStatus.BAD_REQUEST, "error on saving customer data, please try again.");
+    if (!customer) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "error on saving customer data, please try again."
+      );
     }
     userBody.customer_id = customer._id;
   }
@@ -56,8 +63,11 @@ const createSale = async (userBody) => {
     updateCustPointsBody
   );
 
-  console.log('updateCustPointsBodyRes', updateCustPointsBodyRes.total_membership_point);
-  console.log('sale', sale);
+  console.log(
+    "updateCustPointsBodyRes",
+    updateCustPointsBodyRes.total_membership_point
+  );
+  console.log("sale", sale);
 
   // send whatsapp to phone number
 
@@ -109,13 +119,12 @@ const createSale = async (userBody) => {
     url: `https://graph.facebook.com/v15.0/${config.meta.sender_phone_id}/messages`,
     headers: {
       "Content-Type": "application/json",
-      Authorization:
-        `Bearer ${config.meta.access_token}`,
+      Authorization: `Bearer ${config.meta.access_token}`,
     },
     data: data,
   };
 
-  console.log('data', data);
+  console.log("data", data);
   const sendWhatsappMessage = await axios(configuration)
     .then(function (response) {
       console.log(JSON.stringify(response.data));
@@ -158,7 +167,8 @@ const deleteSaleById = async (saleId) => {
 
 const getChartData = async (chartType) => {
   let label = [],
-    data = [];
+    data = [],
+    newData = [];
   switch (chartType) {
     case "daily":
       label = [
@@ -170,30 +180,49 @@ const getChartData = async (chartType) => {
         moment().subtract(5, "day").format("DD MMM YYYY"),
       ].reverse();
 
-      // data = await Sale.aggregate([
-      // {
-      //   $match: {
-      //     createdAt: {
-      //       $gte: moment().subtract(5, "day").toISOString(),
-      //       $lte: moment().toISOString(),
+      console.log(
+        'moment().subtract(5, "day").toISOString()',
+        moment().subtract(5, "day").toDate(),
+        new Date()
+      );
 
-      //     },
-      //   },
-      // },
-      // {
-      //   $group: {
-      //     _id: "$total", //{ name: "$name"},
-      //     totalSales: { $sum: "$total" },
-      //   },
-      // },
-      // { $project: { _id: 1, qty: "$totalSales" } },
-      // ]);
+      data = await Sale.aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: moment().subtract(5, "day").toDate(),
+              $lte: moment().toDate(),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            totalSales: { $sum: { $toDouble: "$total" } },
+          },
+        },
+        { $sort: { _id: 1 } },
+      ]);
 
-      data = [200, 450, 1000, 800, 300, 700];
+      // populate data based on label
+      newData = label.map((item) => {
+        const found = data.find(
+          (e) => e._id === moment(item).format("YYYY-MM-DD")
+        );
+
+        if (found) {
+          return found.totalSales.toFixed(2);
+        } else {
+          return 0;
+        }
+      });
+
+      console.log("data", data);
+      console.log("newData", newData);
 
       return {
-        data,
         label,
+        data: newData,
       };
       break;
 
@@ -207,31 +236,52 @@ const getChartData = async (chartType) => {
         moment().subtract(5, "weeks").startOf("week").format("DD MMM YYYY"),
       ].reverse();
 
-      // data = await Sale.aggregate([
-      //   {
-      //     $match: {
-      //       createdAt: {
-      //         $gte: moment()
-      //           .subtract(5, "weeks")
-      //           .startOf("week")
-      //           .format("DD MMM YYYY"),
-      //         $lte: moment().startOf("week").format("DD MMM YYYY"),
-      //       },
-      //     },
-      //   },
-      //   {
-      //     $group: {
-      //       _id: "$total", //{ name: "$name"},
-      //       totalSales: { $sum: "$total" },
-      //     },
-      //   },
-      //   { $project: { _id: 1, qty: "$totalSales" } },
-      // ]);
+      data = await Sale.aggregate([
+        {
+          $project: {
+            week: { $week: "$createdAt" },
+            year: { $year: "$createdAt" },
+            total: 1,
+            createdAt: 1,
+          },
+        },
+        {
+          $match: {
+            createdAt: {
+              $gte: moment().subtract(10, "weeks").startOf("week").toDate(),
+              $lte: moment().toDate(),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              week: { $week: "$createdAt" },
+            },
+            totalSales: { $sum: { $toDouble: "$total" } },
+          },
+        },
+      ]);
+      console.log("data", data);
 
-      data = [2500, 5000, 4500, 9950, 10500, 10800];
+      // populate data based on label
+      newData = label.map((item) => {
+        const found = data.find(
+          (e) => e._id.week === moment(item).week() && e._id.year == moment(item).format("YYYY")
+        );
+
+        if (found) {
+          return found.totalSales.toFixed(2);
+        } else {
+          return 0;
+        }
+      });
+
+      console.log("newData", newData);
 
       return {
-        data,
+        newData,
         label,
       };
       break;
@@ -246,10 +296,54 @@ const getChartData = async (chartType) => {
         moment().subtract(5, "month").startOf("month").format("MMM YYYY"),
       ].reverse();
 
-      data = [30500, 29800, 25050, 31790, 32456, 34789];
+      // data = [30500, 29800, 25050, 31790, 32456, 34789];
+
+      data = await Sale.aggregate([
+        {
+          $project: {
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" },
+            total: 1,
+            createdAt: 1,
+          },
+        },
+        {
+          $match: {
+            createdAt: {
+              $gte: moment().subtract(5, "month").startOf("month").toDate(),
+              $lte: moment().toDate(),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
+            totalSales: { $sum: { $toDouble: "$total" } },
+          },
+        },
+      ]);
+      
+      // populate data based on label
+      newData = label.map((item) => {
+        const found = data.find(
+          (e) => e._id.year == moment(item).format("YYYY") && e._id.month == moment(item).format("M")
+        );
+
+        if (found) {
+          return found.totalSales.toFixed(2);
+        } else {
+          return 0;
+        }
+      });
+
+      console.log("data", data);
+      console.log("newData", newData);
 
       return {
-        data,
+        newData,
         label,
       };
       break;
@@ -261,10 +355,52 @@ const getChartData = async (chartType) => {
         moment().subtract(2, "year").startOf("year").format("YYYY"),
       ].reverse();
 
-      data = [80560, 98790, 50678];
+      data = await Sale.aggregate([
+        {
+          $project: {
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" },
+            total: 1,
+            createdAt: 1,
+          },
+        },
+        {
+          $match: {
+            createdAt: {
+              $gte: moment().subtract(2, "year").startOf("year").toDate(),
+              $lte: moment().toDate(),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
+            totalSales: { $sum: { $toDouble: "$total" } },
+          },
+        },
+      ]);
+
+      // populate data based on label
+      newData = label.map((item) => {
+        const found = data.find(
+          (e) => e._id.year == moment(item).format("YYYY")
+        );
+
+        if (found) {
+          return found.totalSales.toFixed(2);
+        } else {
+          return 0;
+        }
+      });
+
+      console.log("data", data);
+      console.log("newData", newData);
 
       return {
-        data,
+        newData,
         label,
       };
       break;
