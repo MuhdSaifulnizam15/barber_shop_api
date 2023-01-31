@@ -49,6 +49,11 @@ const createSale = async (userBody) => {
     userBody.customer_id = customer._id;
   }
 
+  if (userBody?.total_redeemed_point) {
+    if (userBody?.total_redeemed_point > customer?.total_membership_point)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Redeemed point more than total points, please try again");
+  }
+
   const sale = await Sale.create(userBody);
 
   // update customer total_redeemed_point and total_spend
@@ -125,13 +130,13 @@ const createSale = async (userBody) => {
   };
 
   console.log("data", data);
-  const sendWhatsappMessage = await axios(configuration)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  // const sendWhatsappMessage = await axios(configuration)
+  //   .then(function (response) {
+  //     console.log(JSON.stringify(response.data));
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
 
   return sale;
 };
@@ -268,7 +273,9 @@ const getChartData = async (chartType) => {
       // populate data based on label
       newData = label.map((item) => {
         const found = data.find(
-          (e) => e._id.week === moment(item).week() && e._id.year == moment(item).format("YYYY")
+          (e) =>
+            e._id.week === moment(item).week() &&
+            e._id.year == moment(item).format("YYYY")
         );
 
         if (found) {
@@ -325,11 +332,13 @@ const getChartData = async (chartType) => {
           },
         },
       ]);
-      
+
       // populate data based on label
       newData = label.map((item) => {
         const found = data.find(
-          (e) => e._id.year == moment(item).format("YYYY") && e._id.month == moment(item).format("M")
+          (e) =>
+            e._id.year == moment(item).format("YYYY") &&
+            e._id.month == moment(item).format("M")
         );
 
         if (found) {
