@@ -288,7 +288,7 @@ const getChartData = async (chartType) => {
       console.log("newData", newData);
 
       return {
-        newData,
+        data: newData,
         label,
       };
       break;
@@ -352,7 +352,7 @@ const getChartData = async (chartType) => {
       console.log("newData", newData);
 
       return {
-        newData,
+        data: newData,
         label,
       };
       break;
@@ -409,7 +409,7 @@ const getChartData = async (chartType) => {
       console.log("newData", newData);
 
       return {
-        newData,
+        data: newData,
         label,
       };
       break;
