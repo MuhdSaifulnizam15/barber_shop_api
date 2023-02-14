@@ -21,8 +21,16 @@ const deleteService = {
     })
 };
 
+const getChartData = {
+  params: Joi.object().keys({
+    startDate: Joi.string(),
+    endDate: Joi.string()
+  }),
+};
+
 module.exports = {
     createService,
     updateService,
     deleteService,
+    getChartData
 };
