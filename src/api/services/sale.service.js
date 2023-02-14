@@ -133,13 +133,13 @@ const createSale = async (userBody) => {
   };
 
   console.log("data", data);
-  // const sendWhatsappMessage = await axios(configuration)
-  //   .then(function (response) {
-  //     console.log(JSON.stringify(response.data));
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //   });
+  const sendWhatsappMessage = await axios(configuration)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 
   return sale;
 };
