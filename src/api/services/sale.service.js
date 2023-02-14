@@ -180,12 +180,12 @@ const getChartData = async (chartType) => {
   switch (chartType) {
     case "daily":
       label = [
-        moment().format("DD MMM YYYY"),
-        moment().subtract(1, "day").format("DD MMM YYYY"),
-        moment().subtract(2, "day").format("DD MMM YYYY"),
-        moment().subtract(3, "day").format("DD MMM YYYY"),
-        moment().subtract(4, "day").format("DD MMM YYYY"),
-        moment().subtract(5, "day").format("DD MMM YYYY"),
+        moment().format("DD MMM YY"),
+        moment().subtract(1, "day").format("DD MMM YY"),
+        moment().subtract(2, "day").format("DD MMM YY"),
+        moment().subtract(3, "day").format("DD MMM YY"),
+        moment().subtract(4, "day").format("DD MMM YY"),
+        moment().subtract(5, "day").format("DD MMM YY"),
       ].reverse();
 
       console.log(
@@ -236,12 +236,12 @@ const getChartData = async (chartType) => {
 
     case "week":
       label = [
-        moment().startOf("week").format("DD MMM YYYY"),
-        moment().subtract(1, "weeks").startOf("week").format("DD MMM YYYY"),
-        moment().subtract(2, "weeks").startOf("week").format("DD MMM YYYY"),
-        moment().subtract(3, "weeks").startOf("week").format("DD MMM YYYY"),
-        moment().subtract(4, "weeks").startOf("week").format("DD MMM YYYY"),
-        moment().subtract(5, "weeks").startOf("week").format("DD MMM YYYY"),
+        moment().startOf("week").format("DD MMM YY"),
+        moment().subtract(1, "weeks").startOf("week").format("DD MMM YY"),
+        moment().subtract(2, "weeks").startOf("week").format("DD MMM YY"),
+        moment().subtract(3, "weeks").startOf("week").format("DD MMM YY"),
+        moment().subtract(4, "weeks").startOf("week").format("DD MMM YY"),
+        moment().subtract(5, "weeks").startOf("week").format("DD MMM YY"),
       ].reverse();
 
       data = await Sale.aggregate([
