@@ -17,8 +17,9 @@ const createStaff = async (userBody) => {
 };
 
 const queryStaffs = async (options) => {
+  // console.log('options', options);
   options.populate = ['branch_id'];
-  const staffs = await Staff.paginate({}, options);
+  const staffs = await Staff.paginate(options || {}, options);
   return staffs;
 };
 

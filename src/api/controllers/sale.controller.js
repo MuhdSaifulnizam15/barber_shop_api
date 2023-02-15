@@ -10,7 +10,7 @@ const createSale = catchAsync(async (req, res) => {
 });
 
 const getSales = catchAsync(async (req, res) => {
-    const options = pick(req.query, ['sort', 'limit', 'page']);
+    const options = pick(req.query, ['sort', 'limit', 'page', 'barber_id', 'branch_id', 'customer_id']);
     const result = await saleService.querySales(options);
     res.send({ status: true, code: '0000', result });
 });
@@ -29,7 +29,7 @@ const updateSale = catchAsync(async (req, res) => {
 });
 
 const deleteSale = catchAsync(async (req, res) => {
-    await saleService.deleteServiceById(req.params.saleId);
+    await saleService.deleteSaleById(req.params.saleId);
     res.send({ status: true, code: '0000', message: 'Sale successfully deleted'});
 })
 

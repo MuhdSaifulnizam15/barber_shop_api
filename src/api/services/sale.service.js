@@ -146,7 +146,8 @@ const createSale = async (userBody) => {
 
 const querySales = async (options) => {
   options.populate = ["branch_id", "barber_id", "customer_id", "order.service"];
-  const sales = await Sale.paginate({}, options);
+  // console.log('options', options)
+  const sales = await Sale.paginate(options || {}, options);
   return sales;
 };
 
