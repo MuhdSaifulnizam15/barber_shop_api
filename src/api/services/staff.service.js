@@ -6,7 +6,10 @@ const { createUser } = require("./user.service");
 
 const createStaff = async (userBody) => {
   if (await Staff.isPhoneNumberTaken(userBody.phone_no)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "staff phone number already exist.");
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "staff phone number already exist."
+    );
   }
   const branch = await getBranchById(userBody.branch_id);
   if (!branch) {
@@ -15,16 +18,16 @@ const createStaff = async (userBody) => {
   userBody.branch_id = branch._id;
 
   const user = await createUser(userBody);
-  console.log('user', user);
+  console.log("user", user);
   userBody.user_id = user._id;
-  
+
   const staff = await Staff.create(userBody);
   return staff;
 };
 
 const queryStaffs = async (options) => {
   // console.log('options', options);
-  options.populate = ['branch_id', 'user_id'];
+  options.populate = ["branch_id", "user_id"];
   const staffs = await Staff.paginate(options || {}, options);
   return staffs;
 };
@@ -37,9 +40,9 @@ const getStaffByName = async (name) => {
   return Staff.findOne({ fullname: name });
 };
 
-const getStaffByUserId = async (userId) => {
-  return Staff.findOne({ user_id: userId });
-}
+const getStaffByUserId = async (user_id) => {
+  return Staff.findOne({ user_id });
+};
 
 const updateStaffById = async (staffId, updateBody) => {
   const staff = await getStaffById(staffId);

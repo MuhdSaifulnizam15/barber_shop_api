@@ -10,7 +10,7 @@ const createStaff = catchAsync(async (req, res) => {
 });
 
 const getStaffs = catchAsync(async (req, res) => {
-    const options = pick(req.query, ['sort', 'limit', 'page', 'branch_id']);
+    const options = pick(req.query, ['sort', 'limit', 'page', 'branch_id', 'user_id']);
     const result = await staffService.queryStaffs(options);
     res.send({ status: true, code: '0000', result });
 });
