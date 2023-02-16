@@ -2,7 +2,7 @@ const httpStatus = require("http-status");
 const { Staff, User } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getBranchById } = require("./branch.service");
-const { createUser } = require("./user.service");
+const { createUser, updateUserById } = require("./user.service");
 
 const createStaff = async (userBody) => {
   if (await Staff.isPhoneNumberTaken(userBody.phone_no)) {
@@ -51,6 +51,12 @@ const updateStaffById = async (staffId, updateBody) => {
   }
   Object.assign(staff, updateBody);
   await staff.save();
+  const userBody = {
+    first_name: updateBody.first_name,
+    last_name: updateBody.last_name,
+  }
+  console.log('userBody', userBody, userBody.user_id)
+  await updateUserById(updateBody.user_id, userBody);
   return staff;
 };
 
