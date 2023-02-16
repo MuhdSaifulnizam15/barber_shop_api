@@ -20,7 +20,7 @@ const getPermissionList = [
   "getSale",
   "getSales",
 ];
-const staffPermissionList = [];
+const staffPermissionList = ["manageSale"];
 const adminManagePermissionList = [
   "manageUsers",
   "manageCategory",
