@@ -1,7 +1,8 @@
 const httpStatus = require("http-status");
-const { Staff } = require("../models");
+const { Staff, User } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { getBranchById } = require("./branch.service");
+const { createUser } = require("./user.service");
 
 const createStaff = async (userBody) => {
   if (await Staff.isPhoneNumberTaken(userBody.phone_no)) {
@@ -12,13 +13,18 @@ const createStaff = async (userBody) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "branch not found.");
   }
   userBody.branch_id = branch._id;
+
+  const user = await createUser(userBody);
+  console.log('user', user);
+  userBody.user_id = user._id;
+  
   const staff = await Staff.create(userBody);
   return staff;
 };
 
 const queryStaffs = async (options) => {
   // console.log('options', options);
-  options.populate = ['branch_id'];
+  options.populate = ['branch_id', 'user_id'];
   const staffs = await Staff.paginate(options || {}, options);
   return staffs;
 };
@@ -30,6 +36,10 @@ const getStaffById = async (id) => {
 const getStaffByName = async (name) => {
   return Staff.findOne({ fullname: name });
 };
+
+const getStaffByUserId = async (userId) => {
+  return Staff.findOne({ user_id: userId });
+}
 
 const updateStaffById = async (staffId, updateBody) => {
   const staff = await getStaffById(staffId);
@@ -57,4 +67,5 @@ module.exports = {
   getStaffByName,
   updateStaffById,
   deleteStaffById,
+  getStaffByUserId,
 };
