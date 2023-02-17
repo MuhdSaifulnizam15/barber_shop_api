@@ -9,4 +9,5 @@ module.exports = {
   Customer: require('./customer.model'),
   Sale: require('./sale.model'),
   Order: require('./order.model'),
+  Freebie: require('./freebie.model'),
 };

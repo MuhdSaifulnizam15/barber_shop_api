@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const { toJSON } = require("./plugins");
 const { orderSchema } = require('./order.model');
+const { freebieSchema } = require('./freebie.model');
 
 const salesSchema = mongoose.Schema(
   {
@@ -28,7 +29,8 @@ const salesSchema = mongoose.Schema(
     rewarded_points: {
       type: String,
       default: 0
-    }
+    },
+    freebie: [freebieSchema],
   },
   {
     timestamps: true,
