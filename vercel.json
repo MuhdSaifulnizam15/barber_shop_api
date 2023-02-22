@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "barber_shop_api",
+  "builds": [
+    {
+      "src": "src/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "src/(.*)",
+      "dest": "/index.js"
+    }
+  ]
+}
