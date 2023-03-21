@@ -21,14 +21,16 @@ const getSales = catchAsync(async (req, res) => {
 
   const filter = pick(req.query, ['barber_id', 'branch_id', 'customer_id']);
 
-  filter.createdAt = {
-    $gte: req?.query?.start_date
-      ? moment(req?.query?.start_date).format()
-      : moment().startOf('day').format(),
-    $lte: req?.query?.end_date
-      ? moment(req?.query?.end_date).endOf('day').format()
-      : moment().endOf('day').format(),
-  };
+  if (req?.query?.start_date) {
+    filter.createdAt = {
+      $gte: moment(req?.query?.start_date).startOf('day').format(),
+      $lte: req?.query?.end_date
+        ? moment(req?.query?.end_date).endOf('day').format()
+        : moment().endOf('day').format(),
+    };
+  }
+
+  console.log('moment', filter);
 
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
 
