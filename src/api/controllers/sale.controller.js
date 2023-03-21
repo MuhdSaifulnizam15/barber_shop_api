@@ -1,4 +1,6 @@
 const httpStatus = require('http-status');
+const moment = require('moment');
+
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
@@ -18,6 +20,15 @@ const getSales = catchAsync(async (req, res) => {
   }
 
   const filter = pick(req.query, ['barber_id', 'branch_id', 'customer_id']);
+
+  filter.createdAt = {
+    $gte: req?.query?.start_date
+      ? moment(req?.query?.start_date).format()
+      : moment().startOf('day').format(),
+    $lte: req?.query?.end_date
+      ? moment(req?.query?.end_date).endOf('day').format()
+      : moment().endOf('day').format(),
+  };
 
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
 
