@@ -17,9 +17,9 @@ const createService = async (userBody) => {
   return service;
 };
 
-const queryServices = async (options) => {
+const queryServices = async (filter, options) => {
   options.populate = ["category_id"];
-  const services = await Service.paginate({}, options);
+  const services = await Service.paginate(filter || {}, options);
   return services;
 };
 

@@ -10,8 +10,8 @@ const createCustomer = async (userBody) => {
   return customer;
 };
 
-const queryCustomers = async (options) => {
-  const customers = await Customer.paginate({}, options);
+const queryCustomers = async (filter, options) => {
+  const customers = await Customer.paginate(filter || {}, options);
   return customers;
 };
 

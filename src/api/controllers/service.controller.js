@@ -10,8 +10,24 @@ const createService = catchAsync(async (req, res) => {
 });
 
 const getServices = catchAsync(async (req, res) => {
-  const options = pick(req.query, ["sort", "limit", "page"]);
-  const result = await serviceService.queryServices(options);
+  const filter = pick(req.query, ['name']);
+  const options = pick(req.query, ["sortBy", "limit", "page"]);
+
+  let sort = '';
+  if (options.sortBy) {
+    const sortingCriteria = [];
+    options.sortBy.split(',').forEach((sortOption) => {
+      const [key, order] = sortOption.split(':');
+      sortingCriteria.push((order === 'desc' ? '-' : '') + key);
+    });
+    sort = sortingCriteria.join(' ');
+  } else {
+    sort = 'createdAt';
+  }
+
+  options.sort = sort;
+
+  const result = await serviceService.queryServices(filter, options);
   res.send({ status: true, code: "0000", result });
 });
 
