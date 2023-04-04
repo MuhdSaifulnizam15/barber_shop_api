@@ -1,34 +1,35 @@
-const roles = ["staff", "admin"];
+const roles = ['staff', 'admin'];
 
 const roleRights = new Map();
 
 const getPermissionList = [
-  "getUser",
-  "getUsers",
-  "getDashboard",
-  "getUserProfile",
-  "getCategory",
-  "getCategories",
-  "getService",
-  "getServices",
-  "getBranch",
-  "getBranches",
-  "getStaff",
-  "getStaffs",
-  "getCustomer",
-  "getCustomers",
-  "getSale",
-  "getSales",
+  'getUser',
+  'getUsers',
+  'getDashboard',
+  'getUserProfile',
+  'getCategory',
+  'getCategories',
+  'getService',
+  'getServices',
+  'getBranch',
+  'getBranches',
+  'getStaff',
+  'getStaffs',
+  'getCustomer',
+  'getCustomers',
+  'getSale',
+  'getSales',
+  'changePassword',
 ];
-const staffPermissionList = ["manageSale"];
+const staffPermissionList = ['manageSale'];
 const adminManagePermissionList = [
-  "manageUsers",
-  "manageCategory",
-  "manageService",
-  "manageBranch",
-  "manageStaff",
-  "manageCustomer",
-  "manageSale",
+  'manageUsers',
+  'manageCategory',
+  'manageService',
+  'manageBranch',
+  'manageStaff',
+  'manageCustomer',
+  'manageSale',
 ];
 
 roleRights.set(roles[0], staffPermissionList.concat(getPermissionList));
