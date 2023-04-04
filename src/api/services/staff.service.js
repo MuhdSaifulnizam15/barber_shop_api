@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Staff, User } = require('../models');
+const { Staff, User, Sale } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { getBranchById } = require('./branch.service');
 const { createUser, updateUserById } = require('./user.service');
@@ -27,8 +27,35 @@ const createStaff = async (userBody) => {
 
 const queryStaffs = async (filter, options) => {
   options.populate = ['branch_id', 'user_id'];
-  const staffs = await Staff.paginate(filter || {}, options);
-  return staffs;
+  let staffs = await Staff.paginate(filter || {}, options);
+
+  var totalSale = await Promise.all(
+    staffs.docs.map(async (staff, index) => {
+      // Get staff sales
+      const sale = await Sale.aggregate([
+        {
+          $match: {
+            barber_id: staff._id,
+          },
+        },
+        {
+          $group: {
+            _id: staff._id,
+            totalSales: { $sum: { $toDouble: '$total' } },
+          },
+        },
+      ]);
+
+      staff.sale = sale[0]?.totalSales || 0;
+
+      return {
+        staff_id: staff._id,
+        sale: sale[0]?.totalSales || 0
+      };
+    })
+  );
+
+  return { ...staffs, totalSale };
 };
 
 const getStaffById = async (id) => {
