@@ -47,7 +47,11 @@ const forgotPassword = catchAsync(async (req, res) => {
     req.body.email
   );
   await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
-  res.send({ status: true, code: '0000' });
+  res.send({
+    status: true,
+    code: '0000',
+    message: `Reset password successfully sent. Please check your email, ${req.body.email}`,
+  });
 });
 
 const resetPassword = catchAsync(async (req, res) => {
@@ -56,8 +60,16 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 
 const changePassword = catchAsync(async (req, res) => {
-  await authService.changePassword(req.body.userId, req.body.oldPassword, req.body.newPassword);
-  res.send({ status: true, code: '0000', message: 'new password successfully updated' });
+  await authService.changePassword(
+    req.body.userId,
+    req.body.oldPassword,
+    req.body.newPassword
+  );
+  res.send({
+    status: true,
+    code: '0000',
+    message: 'new password successfully updated',
+  });
 });
 
 const verifyEmail = catchAsync(async (req, res) => {

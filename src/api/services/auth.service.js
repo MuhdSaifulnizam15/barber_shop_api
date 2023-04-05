@@ -109,10 +109,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
 
     await userService.updateUserById(user.id, { password: newPassword });
   } catch (err) {
-    throw new ApiError(
-      httpStatus.UNAUTHORIZED,
-      `Change password failed, ${err.message}`
-    );
+    throw new ApiError(httpStatus.UNAUTHORIZED, err.message);
   }
 };
 
