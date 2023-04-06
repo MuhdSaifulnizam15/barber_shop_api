@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
+const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 const { toJSON } = require('./plugins');
 
 const staffSchema = mongoose.Schema({
@@ -28,6 +29,7 @@ const staffSchema = mongoose.Schema({
 
 staffSchema.plugin(toJSON);
 staffSchema.plugin(mongoosePaginate);
+staffSchema.plugin(aggregatePaginate);
 
 staffSchema.statics.isPhoneNumberTaken = async function (phone_no, excludeStaffId) {
     const staff = await this.findOne({ phone_no, _id: { $ne: excludeStaffId } });

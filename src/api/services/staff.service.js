@@ -1,4 +1,6 @@
 const httpStatus = require('http-status');
+const moment = require("moment");
+
 const { Staff, User, Sale } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { getBranchById } = require('./branch.service');
@@ -26,31 +28,58 @@ const createStaff = async (userBody) => {
 };
 
 const queryStaffs = async (filter, options) => {
+  const { startDate, endDate } = filter;
   options.populate = ['branch_id', 'user_id'];
+
+  const start_date = startDate ? moment(startDate).format() : moment().toDate();
+  const end_date = endDate ? moment(endDate).format() : moment().toDate();
+
   let staffs = await Staff.paginate(filter || {}, options);
 
   var totalSale = await Promise.all(
     staffs.docs.map(async (staff, index) => {
-      // Get staff sales
-      const sale = await Sale.aggregate([
-        {
-          $match: {
-            barber_id: staff._id,
+
+      if(startDate) {
+        // Get staff sales
+        var sale = await Sale.aggregate([
+          {
+            $match: {
+              barber_id: staff._id,
+              createdAt: {
+                $gte: moment(start_date).toDate(),
+                $lte: moment(end_date).endOf('day').toDate(),
+              },
+            },
           },
-        },
-        {
-          $group: {
-            _id: staff._id,
-            totalSales: { $sum: { $toDouble: '$total' } },
+          {
+            $group: {
+              _id: staff._id,
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
           },
-        },
-      ]);
+        ]);
+      } else {
+        // Get staff sales
+        var sale = await Sale.aggregate([
+          {
+            $match: {
+              barber_id: staff._id,
+            },
+          },
+          {
+            $group: {
+              _id: staff._id,
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+        ]);
+      }
 
       staff.sale = sale[0]?.totalSales || 0;
 
       return {
         staff_id: staff._id,
-        sale: sale[0]?.totalSales || 0
+        sale: sale[0]?.totalSales || 0,
       };
     })
   );
@@ -95,6 +124,51 @@ const deleteStaffById = async (staffId) => {
   return staff;
 };
 
+const getTotalSaleData = async (filter, options) => {
+  const { startDate, endDate } = filter;
+  console.log('startDate', startDate, endDate)
+
+  const start_date = startDate ? moment(startDate).format() : moment().toDate();
+  const end_date = endDate ? moment(endDate).format() : moment().toDate();
+
+  options.populate = ['branch_id', 'user_id'];
+  let staffs = await Staff.paginate(filter || {}, options);
+
+  var totalSale = await Promise.all(
+    staffs.docs.map(async (staff, index) => {
+      // Get staff sales
+      const sale = await Sale.aggregate([
+        {
+          $match: {
+            barber_id: staff._id,
+            createdAt: {
+              $gte: moment(start_date).toDate(),
+              $lte: moment(end_date).endOf('day').toDate(),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: staff._id,
+            totalSales: { $sum: { $toDouble: '$total' } },
+          },
+        },
+      ]);
+
+      staff.sale = sale[0]?.totalSales || 0;
+
+      return {
+        staff_id: staff._id,
+        staff_name: staff.full_name,
+        branch: staff.branch_id,
+        total_sale: sale[0]?.totalSales || 0,
+      };
+    })
+  );
+
+  return totalSale;
+};
+
 module.exports = {
   createStaff,
   queryStaffs,
@@ -103,4 +177,5 @@ module.exports = {
   updateStaffById,
   deleteStaffById,
   getStaffByUserId,
+  getTotalSaleData,
 };
