@@ -5,6 +5,8 @@ const { Staff, User, Sale } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { getBranchById } = require('./branch.service');
 const { createUser, updateUserById } = require('./user.service');
+const { generateEmailActivationToken } = require('./token.service')
+const { sendEmailActivationEmail } = require('./email.service')
 
 const createStaff = async (userBody) => {
   if (await Staff.isPhoneNumberTaken(userBody.phone_no)) {
@@ -18,10 +20,21 @@ const createStaff = async (userBody) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'branch not found.');
   }
   userBody.branch_id = branch._id;
+  userBody.password = 'Rolex@12345'; // default password
 
   const user = await createUser(userBody);
   console.log('user', user);
   userBody.user_id = user._id;
+
+  // send activation email
+  const emailActivationToken = await generateEmailActivationToken(
+    userBody.email
+  );
+
+  await sendEmailActivationEmail(
+    userBody.email,
+    emailActivationToken
+  );
 
   const staff = await Staff.create(userBody);
   return staff;

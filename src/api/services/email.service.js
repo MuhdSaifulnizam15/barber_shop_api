@@ -53,7 +53,13 @@ const sendEmailActivationEmail = async (to, token) => {
   const subject = "Email Confirmation";
   const activationUrl = `${config.url}:${config.port}/api/v1/auth/verify-email?token=${token}`;
   const text = `Dear user, 
-  Please click thi link to activate your account: ${activationUrl}
+
+  Please click this link to activate your account: ${activationUrl}
+  
+  Default password is set to Rolex@12345.
+
+  Please be reminded to update your password once logged in as your account could be compromised by someone.
+
   If you did not request for any email activation, then ignore this email.`;
   await sendEmail(to, subject, text);
 };

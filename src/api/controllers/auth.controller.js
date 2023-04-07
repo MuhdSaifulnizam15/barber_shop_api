@@ -8,6 +8,8 @@ const {
   staffService,
 } = require('../services');
 
+const config = require("../../config/config");
+
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   // const tokens = await tokenService.generateAuthTokens(user);
@@ -80,12 +82,13 @@ const changePassword = catchAsync(async (req, res) => {
 });
 
 const verifyEmail = catchAsync(async (req, res) => {
+  try {
   await authService.verifyEmail(req.query.token);
-  res.send({
-    status: true,
-    code: '0000',
-    message: 'Account verified. Please try to login using this email',
-  });
+  res.redirect(`${config.url_app}/auth/login?type=accVerified`)
+  } catch (error) {
+    console.log('error', error);
+    res.redirect(`${config.url_app}/auth/login?type=accVerificationFailed&message=${encodeURIComponent(error.message)}`)
+  }
 });
 
 const getUserProfile = catchAsync(async (req, res) => {

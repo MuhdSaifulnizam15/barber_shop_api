@@ -43,7 +43,13 @@ const verifyToken = async (token, type) => {
     blacklisted: false,
   });
   if (!tokenDoc) {
-    throw new Error("Token not found");
+    switch(type) {
+      case tokenTypes.EMAIL_ACTIVATION:
+        const user = await userService.getUserById(payload.sub);
+        if(user.active)
+          throw new Error('Account verification failed. Account have been activated.');
+    }
+    throw new Error("Failed to verify your email, token not found. Please contact our administrator");
   }
   return tokenDoc;
 };

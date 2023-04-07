@@ -8,7 +8,15 @@ const { staffService } = require('../services');
 
 const createStaff = catchAsync(async (req, res) => {
   const staff = await staffService.createStaff(req.body);
-  res.status(httpStatus.CREATED).send({ status: true, code: '0000', staff });
+  res
+    .status(httpStatus.CREATED)
+    .send({
+      status: true,
+      code: '0000',
+      message:
+        'User was registered successfully! Email activation sent for account activation.',
+      staff,
+    });
 });
 
 const getStaffs = catchAsync(async (req, res) => {

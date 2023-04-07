@@ -7,9 +7,10 @@ const createStaff = {
     phone_no: Joi.string().required(),
     branch_id: Joi.string().required(),
     email: Joi.string().required().email(),
-    password: Joi.string().required().custom(password),
+    // password: Joi.string().required().custom(password),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
+    role: Joi.string(),
   }),
 };
 

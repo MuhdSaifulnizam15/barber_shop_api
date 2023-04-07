@@ -131,7 +131,7 @@ const verifyEmail = async (emailVerificationToken) => {
       type: tokenTypes.EMAIL_ACTIVATION,
     });
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Failed to verify your email');
+    throw new ApiError(httpStatus.UNAUTHORIZED, error.message);
   }
 };
 
