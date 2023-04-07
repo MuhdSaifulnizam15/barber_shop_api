@@ -96,7 +96,7 @@ const getStaffByName = async (name) => {
 };
 
 const getStaffByUserId = async (user_id) => {
-  return Staff.findOne({ user_id });
+  return Staff.findOne({ user_id }).populate(['branch_id', 'user_id']);
 };
 
 const updateStaffById = async (staffId, updateBody) => {

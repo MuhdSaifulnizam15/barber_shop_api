@@ -10,6 +10,7 @@ router.post('/', auth('manageStaff'), validate(staffValidation.createStaff), sta
 router.get('/', auth('getStaffs'), validate(staffValidation.getStaffs), staffController.getStaffs);
 router.get('/sales', auth('getStaffs'), validate(staffValidation.getTotalSaleData), staffController.getTotalSaleData);
 router.get('/:staffId', auth('getStaff'), validate(staffValidation.getStaff), staffController.getStaff);
+router.get('/user/:staffId', auth('getStaff'), validate(staffValidation.getStaff), staffController.getStaffById);
 router.post('/update/:staffId', auth('manageStaff'), validate(staffValidation.updateStaff), staffController.updateStaff);
 router.post('/delete/:staffId', auth('manageStaff'), validate(staffValidation.deleteStaff), staffController.deleteStaff);
 

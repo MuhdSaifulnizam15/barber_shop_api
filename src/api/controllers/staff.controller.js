@@ -58,6 +58,14 @@ const getStaff = catchAsync(async (req, res) => {
   res.send({ status: true, code: '0000', staff });
 });
 
+const getStaffById = catchAsync(async (req, res) => {
+  const staff = await staffService.getStaffByUserId(req.params.staffId);
+  if (!staff) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Staff not found');
+  }
+  res.send({ status: true, code: '0000', staff });
+});
+
 const updateStaff = catchAsync(async (req, res) => {
   const staff = await staffService.updateStaffById(
     req.params.staffId,
@@ -107,4 +115,5 @@ module.exports = {
   updateStaff,
   deleteStaff,
   getTotalSaleData,
+  getStaffById,
 };
