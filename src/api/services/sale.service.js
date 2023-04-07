@@ -1,6 +1,8 @@
 const httpStatus = require('http-status');
 const moment = require('moment');
 const axios = require('axios');
+const mongoose = require('mongoose');
+
 const config = require('../../config/config');
 const { Sale } = require('../models');
 const ApiError = require('../utils/ApiError');
@@ -175,7 +177,8 @@ const deleteSaleById = async (saleId) => {
   return sale;
 };
 
-const getChartData = async (chartType) => {
+const getChartData = async (chartType, filter) => {
+  const { branch_id } = filter;
   let label = [],
     data = [],
     newData = [];
@@ -196,23 +199,51 @@ const getChartData = async (chartType) => {
         new Date()
       );
 
-      data = await Sale.aggregate([
-        {
-          $match: {
-            createdAt: {
-              $gte: moment().subtract(5, 'day').toDate(),
-              $lte: moment().toDate(),
+      if (branch_id) {
+        data = await Sale.aggregate([
+          {
+            $match: {
+              branch_id: mongoose.Types.ObjectId(branch_id),
+              createdAt: {
+                $gte: moment().subtract(5, 'day').toDate(),
+                $lte: moment().toDate(),
+              },
             },
           },
-        },
-        {
-          $group: {
-            _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-            totalSales: { $sum: { $toDouble: '$total' } },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$createdAt',
+                },
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
           },
-        },
-        { $sort: { _id: 1 } },
-      ]);
+          { $sort: { _id: 1 } },
+        ]);
+      } else {
+        data = await Sale.aggregate([
+          {
+            $match: {
+              createdAt: {
+                $gte: moment().subtract(5, 'day').toDate(),
+                $lte: moment().toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ]);
+      }
 
       // populate data based on label
       newData = label.map((item) => {
@@ -246,33 +277,66 @@ const getChartData = async (chartType) => {
         moment().subtract(5, 'weeks').startOf('week').format('DD MMM YY'),
       ].reverse();
 
-      data = await Sale.aggregate([
-        {
-          $project: {
-            week: { $week: '$createdAt' },
-            year: { $year: '$createdAt' },
-            total: 1,
-            createdAt: 1,
-          },
-        },
-        {
-          $match: {
-            createdAt: {
-              $gte: moment().subtract(10, 'weeks').startOf('week').toDate(),
-              $lte: moment().toDate(),
-            },
-          },
-        },
-        {
-          $group: {
-            _id: {
-              year: { $year: '$createdAt' },
+      if (branch_id) {
+        data = await Sale.aggregate([
+          {
+            $project: {
               week: { $week: '$createdAt' },
+              year: { $year: '$createdAt' },
+              total: 1,
+              branch_id: 1,
+              createdAt: 1,
             },
-            totalSales: { $sum: { $toDouble: '$total' } },
           },
-        },
-      ]);
+          {
+            $match: {
+              branch_id: mongoose.Types.ObjectId(branch_id),
+              createdAt: {
+                $gte: moment().subtract(10, 'weeks').startOf('week').toDate(),
+                $lte: moment().toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: { $year: '$createdAt' },
+                branch_id: '$branch_id',
+                week: { $week: '$createdAt' },
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+        ]);
+      } else {
+        data = await Sale.aggregate([
+          {
+            $project: {
+              week: { $week: '$createdAt' },
+              year: { $year: '$createdAt' },
+              total: 1,
+              createdAt: 1,
+            },
+          },
+          {
+            $match: {
+              createdAt: {
+                $gte: moment().subtract(10, 'weeks').startOf('week').toDate(),
+                $lte: moment().toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: { $year: '$createdAt' },
+                week: { $week: '$createdAt' },
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+        ]);
+      }
       console.log('data', data);
 
       // populate data based on label
@@ -310,33 +374,66 @@ const getChartData = async (chartType) => {
 
       // data = [30500, 29800, 25050, 31790, 32456, 34789];
 
-      data = await Sale.aggregate([
-        {
-          $project: {
-            month: { $month: '$createdAt' },
-            year: { $year: '$createdAt' },
-            total: 1,
-            createdAt: 1,
-          },
-        },
-        {
-          $match: {
-            createdAt: {
-              $gte: moment().subtract(5, 'month').startOf('month').toDate(),
-              $lte: moment().toDate(),
-            },
-          },
-        },
-        {
-          $group: {
-            _id: {
-              year: { $year: '$createdAt' },
+      if (branch_id) {
+        data = await Sale.aggregate([
+          {
+            $project: {
               month: { $month: '$createdAt' },
+              year: { $year: '$createdAt' },
+              total: 1,
+              branch_id: 1,
+              createdAt: 1,
             },
-            totalSales: { $sum: { $toDouble: '$total' } },
           },
-        },
-      ]);
+          {
+            $match: {
+              branch_id: mongoose.Types.ObjectId(branch_id),
+              createdAt: {
+                $gte: moment().subtract(5, 'month').startOf('month').toDate(),
+                $lte: moment().toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: { $year: '$createdAt' },
+                branch_id: '$branch_id',
+                month: { $month: '$createdAt' },
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+        ]);
+      } else {
+        data = await Sale.aggregate([
+          {
+            $project: {
+              month: { $month: '$createdAt' },
+              year: { $year: '$createdAt' },
+              total: 1,
+              createdAt: 1,
+            },
+          },
+          {
+            $match: {
+              createdAt: {
+                $gte: moment().subtract(5, 'month').startOf('month').toDate(),
+                $lte: moment().toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: { $year: '$createdAt' },
+                month: { $month: '$createdAt' },
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+        ]);
+      }
 
       // populate data based on label
       newData = label.map((item) => {
@@ -369,33 +466,62 @@ const getChartData = async (chartType) => {
         moment().subtract(2, 'year').startOf('year').format('YYYY'),
       ].reverse();
 
-      data = await Sale.aggregate([
-        {
-          $project: {
-            month: { $month: '$createdAt' },
-            year: { $year: '$createdAt' },
-            total: 1,
-            createdAt: 1,
-          },
-        },
-        {
-          $match: {
-            createdAt: {
-              $gte: moment().subtract(2, 'year').startOf('year').toDate(),
-              $lte: moment().toDate(),
-            },
-          },
-        },
-        {
-          $group: {
-            _id: {
+      if (branch_id) {
+        data = await Sale.aggregate([
+          {
+            $project: {
               year: { $year: '$createdAt' },
-              month: { $month: '$createdAt' },
+              total: 1,
+              createdAt: 1,
+              branch_id: 1,
             },
-            totalSales: { $sum: { $toDouble: '$total' } },
           },
-        },
-      ]);
+          {
+            $match: {
+              branch_id: mongoose.Types.ObjectId(branch_id),
+              createdAt: {
+                $gte: moment().subtract(2, 'year').startOf('year').toDate(),
+                $lte: moment().toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: { $year: '$createdAt' },
+                branch_id: '$branch_id',
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+        ]);
+      } else {
+        data = await Sale.aggregate([
+          {
+            $project: {
+              year: { $year: '$createdAt' },
+              total: 1,
+              createdAt: 1,
+            },
+          },
+          {
+            $match: {
+              createdAt: {
+                $gte: moment().subtract(2, 'year').startOf('year').toDate(),
+                $lte: moment().toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                year: { $year: '$createdAt' },
+              },
+              totalSales: { $sum: { $toDouble: '$total' } },
+            },
+          },
+        ]);
+      }
 
       // populate data based on label
       newData = label.map((item) => {

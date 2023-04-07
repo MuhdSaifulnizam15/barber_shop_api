@@ -80,7 +80,9 @@ const getTotalSales = catchAsync(async (req, res) => {
 });
 
 const getChartData = catchAsync(async (req, res) => {
-  const data = await saleService.getChartData(req.params.chartType);
+  const filter = pick(req.query, ['branch_id']);
+
+  const data = await saleService.getChartData(req.params.chartType, filter);
   res.send({ status: true, code: '0000', chart: data });
 });
 
