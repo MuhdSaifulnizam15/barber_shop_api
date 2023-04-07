@@ -5,6 +5,7 @@ const {
   userService,
   tokenService,
   emailService,
+  staffService,
 } = require('../services');
 
 const register = catchAsync(async (req, res) => {
@@ -29,7 +30,8 @@ const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
-  res.send({ status: true, code: '0000', user, tokens });
+  const staff = await staffService.getStaffByUserId(user.id);
+  res.send({ status: true, code: '0000', user, tokens, staff });
 });
 
 const logout = catchAsync(async (req, res) => {
@@ -56,7 +58,12 @@ const forgotPassword = catchAsync(async (req, res) => {
 
 const resetPassword = catchAsync(async (req, res) => {
   await authService.resetPassword(req.body.token, req.body.password);
-  res.send({ status: true, code: '0000', message: 'New password updated, please login using newly registered password' });
+  res.send({
+    status: true,
+    code: '0000',
+    message:
+      'New password updated, please login using newly registered password',
+  });
 });
 
 const changePassword = catchAsync(async (req, res) => {
@@ -84,7 +91,8 @@ const verifyEmail = catchAsync(async (req, res) => {
 const getUserProfile = catchAsync(async (req, res) => {
   const accessToken = req.headers['authorization'].split(' ');
   const user = await authService.getUserProfile(accessToken[1]);
-  res.send({ status: true, code: '0000', user });
+  const staff = await staffService.getStaffByUserId(user.id);
+  res.send({ status: true, code: '0000', user, staff });
 });
 
 module.exports = {
