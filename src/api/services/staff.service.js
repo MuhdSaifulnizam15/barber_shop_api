@@ -154,6 +154,7 @@ const getTotalSaleData = async (filter, options) => {
         {
           $match: {
             barber_id: staff._id,
+            // branch_id: staff.branch_id._id,
             createdAt: {
               $gte: moment(start_date).toDate(),
               $lte: moment(end_date).endOf('day').toDate(),
