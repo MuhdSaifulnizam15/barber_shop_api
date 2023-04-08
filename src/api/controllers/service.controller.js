@@ -69,7 +69,8 @@ const deleteService = catchAsync(async (req, res) => {
 });
 
 const getChartData = catchAsync(async (req, res) => {
-  const options = pick(req.query, ['startDate', 'endDate']);
+  const options = pick(req.query, ['startDate', 'endDate','branch_id']);
+  
   const data = await serviceService.getChartData(options);
   res.send({ status: true, code: '0000', chart: data });
 });

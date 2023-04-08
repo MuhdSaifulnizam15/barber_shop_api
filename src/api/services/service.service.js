@@ -1,16 +1,18 @@
-const httpStatus = require("http-status");
-const moment = require("moment");
-const { Service, Sale } = require("../models");
-const ApiError = require("../utils/ApiError");
-const { getCategoryById } = require("./category.service");
+const httpStatus = require('http-status');
+const moment = require('moment');
+const mongoose = require('mongoose');
+
+const { Service, Sale } = require('../models');
+const ApiError = require('../utils/ApiError');
+const { getCategoryById } = require('./category.service');
 
 const createService = async (userBody) => {
   if (await Service.isNameTaken(userBody.name)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "service already exist.");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'service already exist.');
   }
   const category = await getCategoryById(userBody.category_id);
   if (!category) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "category not found.");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'category not found.');
   }
   userBody.category_id = category._id;
   const service = await Service.create(userBody);
@@ -18,7 +20,7 @@ const createService = async (userBody) => {
 };
 
 const queryServices = async (filter, options) => {
-  options.populate = ["category_id"];
+  options.populate = ['category_id'];
   const services = await Service.paginate(filter || {}, options);
   return services;
 };
@@ -34,7 +36,7 @@ const getServiceByName = async (name) => {
 const updateServiceById = async (serviceId, updateBody) => {
   const service = await getServiceById(serviceId);
   if (!service) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Service not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Service not found');
   }
   Object.assign(service, updateBody);
   await service.save();
@@ -44,14 +46,14 @@ const updateServiceById = async (serviceId, updateBody) => {
 const deleteServiceById = async (serviceId) => {
   const service = await getServiceById(serviceId);
   if (!service) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Service not found");
+    throw new ApiError(httpStatus.NOT_FOUND, 'Service not found');
   }
   await service.remove();
   return service;
 };
 
 const getChartData = async (options) => {
-  const { startDate, endDate } = options;
+  const { startDate, endDate, branch_id } = options;
   let label = [],
     newLabel = [],
     data = [],
@@ -62,35 +64,69 @@ const getChartData = async (options) => {
 
   label = await Service.find({});
 
-  data = await Sale.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: moment(start_date).toDate(),
-          $lte: moment(end_date).endOf("day").toDate(),
+  if (branch_id) {
+    data = await Sale.aggregate([
+      {
+        $match: {
+          branch_id: mongoose.Types.ObjectId(branch_id),
+          createdAt: {
+            $gte: moment(start_date).toDate(),
+            $lte: moment(end_date).endOf('day').toDate(),
+          },
         },
       },
-    },
-    {
-      $unwind: "$order",
-    },
-    {
-      $lookup: {
-        from: "services",
-        localField: "order.service",
-        foreignField: "_id",
-        as: "order.service",
+      {
+        $unwind: '$order',
       },
-    },
-    {
-      $group: {
-        _id: "$order.service.name",
-        quantity: { $sum: { $toDouble: "$order.quantity" } },
-        id: { $first: "$order.service._id" },
-        price: { $first: "$order.service.price" },
+      {
+        $lookup: {
+          from: 'services',
+          localField: 'order.service',
+          foreignField: '_id',
+          as: 'order.service',
+        },
       },
-    },
-  ]);
+      {
+        $group: {
+          _id: '$order.service.name',
+          quantity: { $sum: { $toDouble: '$order.quantity' } },
+          id: { $first: '$order.service._id' },
+          price: { $first: '$order.service.price' },
+          // branch_id: '$branch_id',
+        },
+      },
+    ]);
+  } else {
+    data = await Sale.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: moment(start_date).toDate(),
+            $lte: moment(end_date).endOf('day').toDate(),
+          },
+        },
+      },
+      {
+        $unwind: '$order',
+      },
+      {
+        $lookup: {
+          from: 'services',
+          localField: 'order.service',
+          foreignField: '_id',
+          as: 'order.service',
+        },
+      },
+      {
+        $group: {
+          _id: '$order.service.name',
+          quantity: { $sum: { $toDouble: '$order.quantity' } },
+          id: { $first: '$order.service._id' },
+          price: { $first: '$order.service.price' },
+        },
+      },
+    ]);
+  }
 
   // populate data based on label
   newLabel = label.map((obj) => {
