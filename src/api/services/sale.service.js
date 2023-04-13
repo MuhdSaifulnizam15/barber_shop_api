@@ -12,7 +12,7 @@ const {
   updateCustomerPoints,
   createCustomer,
 } = require('./customer.service');
-const { getStaffById } = require('./staff.service');
+const { getStaffById, getTotalSaleData } = require('./staff.service');
 
 const createSale = async (userBody) => {
   const branch = await getBranchById(userBody.branch_id);
@@ -601,6 +601,42 @@ const getTotalSales = async () => {
   };
 };
 
+const getSalesReport = async (filter) => {
+  const { type, date } = filter;
+  let start_date = moment(date).format(),
+    end_date = moment(date).format();
+
+  if(type == 'annual'){
+    start_date = moment(date).startOf('year').add(1, 'day').toDate();
+    end_date = moment(date).endOf('year').toDate();
+  } else if (type === 'month'){
+    start_date = moment(date).startOf('month').add(1, 'day').toDate();
+    end_date = moment(date).endOf('month').toDate();
+  }
+
+  // console.log('start_date', start_date)
+  // console.log('end_date', end_date)
+
+  const sales_data = await Sale.find({
+    createdAt: {
+      $gte: start_date,
+      $lte: end_date,
+    },
+  }).populate(['branch_id', 'barber_id', 'customer_id', 'order.service']);
+
+  let statsFilter = filter, statsOptions = [];
+  filter.startDate = start_date;
+  filter.endDate = end_date;
+
+  const staff_stats = await getTotalSaleData(statsFilter, statsOptions);
+  // console.log('staff_stats', staff_stats);
+
+  return {
+    sales_data,
+    staff_stats,
+  };
+};
+
 module.exports = {
   createSale,
   querySales,
@@ -609,4 +645,5 @@ module.exports = {
   deleteSaleById,
   getTotalSales,
   getChartData,
+  getSalesReport,
 };
