@@ -602,9 +602,10 @@ const getTotalSales = async () => {
 };
 
 const getSalesReport = async (filter) => {
-  const { type, date } = filter;
+  const { type, date, branch_id } = filter;
   let start_date = moment(date).format(),
-    end_date = moment(date).format();
+    end_date = moment(date).format(),
+    sales_data = [];
 
   if(type == 'annual'){
     start_date = moment(date).startOf('year').add(1, 'day').toDate();
@@ -617,12 +618,22 @@ const getSalesReport = async (filter) => {
   // console.log('start_date', start_date)
   // console.log('end_date', end_date)
 
-  const sales_data = await Sale.find({
-    createdAt: {
-      $gte: start_date,
-      $lte: end_date,
-    },
-  }).populate(['branch_id', 'barber_id', 'customer_id', 'order.service']);
+  if(branch_id) {
+    sales_data = await Sale.find({
+      createdAt: {
+        $gte: start_date,
+        $lte: end_date,
+      },
+      branch_id: branch_id
+    }).populate(['branch_id', 'barber_id', 'customer_id', 'order.service']);
+  } else {
+    sales_data = await Sale.find({
+      createdAt: {
+        $gte: start_date,
+        $lte: end_date,
+      },
+    }).populate(['branch_id', 'barber_id', 'customer_id', 'order.service']);
+  }
 
   let statsFilter = filter, statsOptions = [];
   filter.startDate = start_date;
