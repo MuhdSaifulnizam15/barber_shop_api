@@ -608,10 +608,10 @@ const getSalesReport = async (filter) => {
     sales_data = [];
 
   if(type == 'annual'){
-    start_date = moment(date).startOf('year').add(1, 'day').toDate();
+    start_date = moment(date).startOf('year').toDate();
     end_date = moment(date).endOf('year').toDate();
   } else if (type === 'month'){
-    start_date = moment(date).startOf('month').add(1, 'day').toDate();
+    start_date = moment(date).startOf('month').toDate();
     end_date = moment(date).endOf('month').toDate();
   }
 
