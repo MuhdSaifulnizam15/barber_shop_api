@@ -113,37 +113,41 @@ const createInvoice = (invoice, path, res) => {
   // json with invoice layout
   var docDefinition = {
     content: [
+      // {
+      //   columns: [
+      //     {
+      //       image: './src/assets/images/logo.png',
+      //       width: 45,
+      //     },
+      //     // {
+      //     //   // star-sized columns fill the remaining space
+      //     //   // if there's more than one star-column, available width is divided equally
+      //     //   width: '55%',
+      //     // },
+      //     {
+      //       // % width
+      //       width: '90%',
+      //       style: {
+      //         alignment: 'right',
+      //         fontSize: 10,
+      //       },
+      //       text: [
+      //         invoice.company.name + '\n',
+      //         invoice.company.address + '\n',
+      //         invoice.company.city +
+      //           ', ' +
+      //           invoice.company.postcode +
+      //           ' ' +
+      //           invoice.company.state,
+      //       ],
+      //     },
+      //   ],
+      //   // optional space between columns
+      //   columnGap: 10,
+      // },
       {
-        columns: [
-          {
-            image: './src/assets/images/logo.png',
-            width: 45,
-          },
-          // {
-          //   // star-sized columns fill the remaining space
-          //   // if there's more than one star-column, available width is divided equally
-          //   width: '55%',
-          // },
-          {
-            // % width
-            width: '90%',
-            style: {
-              alignment: 'right',
-              fontSize: 10,
-            },
-            text: [
-              invoice.company.name + '\n',
-              invoice.company.address + '\n',
-              invoice.company.city +
-                ', ' +
-                invoice.company.postcode +
-                ' ' +
-                invoice.company.state,
-            ],
-          },
-        ],
-        // optional space between columns
-        columnGap: 10,
+        image: './src/assets/images/logo.png',
+        width: 45,
       },
       {
         text: `${invoice.type === 'annual' ? 'ANNUAL' : 'MONTHLY'} STATEMENT`,
@@ -156,7 +160,11 @@ const createInvoice = (invoice, path, res) => {
         alignment: 'center',
       },
       {
-        text: `${invoice.type === 'annual' ? moment(invoice.date).format('YYYY') : (moment(invoice.date).format("MMMM")).toUpperCase()}`,
+        text: `${
+          invoice.type === 'annual'
+            ? moment(invoice.date).format('YYYY')
+            : moment(invoice.date).format('MMMM').toUpperCase()
+        }`,
         style: {
           fontSize: 16,
           bold: true,
