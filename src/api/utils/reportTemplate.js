@@ -24,10 +24,14 @@ const createInvoice = (invoice, path, res) => {
   };
   var printer = new PDFTableDocument(fonts);
   var date = '';
+  var total = 0;
 
   // generate sales table record
   const salesList = invoice.items.map((item, index) => {
     var statement = '';
+
+    // accumulate total
+    total = parseFloat(total) + parseFloat(item?.total);
 
     // loop through order
     var serviceList = invoice.items[index].order.map((list, index) => {
@@ -229,36 +233,36 @@ const createInvoice = (invoice, path, res) => {
           ],
         },
       },
-      // {
-      //   fontSize: 11,
-      //   table: {
-      //     widths: ['80%', '20%'],
-      //     body: [
-      //       [
-      //         {
-      //           text: 'Total:',
-      //           alignment: 'right',
-      //           style: {
-      //             fontSize: 11,
-      //             bold: true,
-      //           },
-      //           border: [false, false, false, false],
-      //           margin: [0, 5, 0, 5],
-      //         },
-      //         {
-      //           text: formatCurrency(invoice.total),
-      //           alignment: 'right',
-      //           style: {
-      //             fontSize: 11,
-      //             bold: true,
-      //           },
-      //           border: [false, false, false, true],
-      //           margin: [0, 5, 0, 5],
-      //         },
-      //       ],
-      //     ],
-      //   },
-      // },
+      {
+        fontSize: 11,
+        table: {
+          widths: ['80%', '20%'],
+          body: [
+            [
+              {
+                text: 'Total:',
+                alignment: 'right',
+                style: {
+                  fontSize: 11,
+                  bold: true,
+                },
+                border: [false, false, false, false],
+                margin: [0, 5, 0, 5],
+              },
+              {
+                text: formatCurrency(total),
+                alignment: 'right',
+                style: {
+                  fontSize: 11,
+                  bold: true,
+                },
+                border: [false, false, false, true],
+                margin: [0, 5, 0, 5],
+              },
+            ],
+          ],
+        },
+      },
 
       {
         text: 'Staff Sales Statistics',
